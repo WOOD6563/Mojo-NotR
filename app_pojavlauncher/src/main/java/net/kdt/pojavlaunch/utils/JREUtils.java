@@ -149,17 +149,6 @@ public class JREUtils {
             envMap.put("TU_DEBUG", "sysmem");
         }
 
-        overrideEnvVars(envMap);
-
-        for (Map.Entry<String, String> env : envMap.entrySet()) {
-            Logger.appendToLog("Added custom env: " + env.getKey() + "=" + env.getValue());
-            try {
-                Os.setenv(env.getKey(), env.getValue(), true);
-            }catch (NullPointerException exception){
-                Log.e("JREUtils", exception.toString());
-            }
-        }
-
        if (renderer.equals("opengles3_ltw")) {
           setupAngleEnv(context, envMap);
        }
@@ -176,6 +165,17 @@ public class JREUtils {
            envMap.put("LIBGL_NORMALIZE", "1");
            envMap.put("LIBGL_NOINTOVLHACK", "1");
        }
+
+        overrideEnvVars(envMap);
+
+        for (Map.Entry<String, String> env : envMap.entrySet()) {
+            Logger.appendToLog("Added custom env: " + env.getKey() + "=" + env.getValue());
+            try {
+                Os.setenv(env.getKey(), env.getValue(), true);
+            }catch (NullPointerException exception){
+                Log.e("JREUtils", exception.toString());
+            }
+        }
     }
 
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {

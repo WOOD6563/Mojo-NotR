@@ -165,6 +165,14 @@ public class JREUtils {
                 Log.e("JREUtils", exception.toString());
             }
         }
+
+        if(renderer.equals("opengles3_nggl4es")) {
+           envMap.put("LIBGL_USE_MC_COLOR", "1");
+           envMap.put("LIBGL_GL", "31");
+           envMap.put("LIBGL_ES", "3");
+           envMap.put("LIBGL_NORMALIZE", "1");
+           envMap.put("LIBGL_NOINTOVLHACK", "1");
+        }
     }
 
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
@@ -253,6 +261,11 @@ public class JREUtils {
                 break;
             case "opengles3_ltw" :
                 renderLibrary = "libltw.so";
+                useGles = true;
+                glesVersion = 3;
+                break;
+            case "opengles3_nggl4es":
+                renderLibrary = "libng_gl4es.so";
                 useGles = true;
                 glesVersion = 3;
                 break;

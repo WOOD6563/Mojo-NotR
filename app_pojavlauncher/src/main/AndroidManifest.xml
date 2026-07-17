@@ -53,6 +53,7 @@
             android:name="net.kdt.pojavlaunch.TestStorageActivity"
             android:exported="true"
             android:label="@string/app_short_name"
+            android:screenOrientation="sensorLandscape"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

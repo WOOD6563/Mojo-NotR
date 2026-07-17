@@ -129,8 +129,6 @@ public class JREUtils {
     		modRuntimeDir.mkdirs();
 		}
 		envMap.put("MOD_ANDROID_RUNTIME", modRuntimeDir.getAbsolutePath());
-
-        setupAngleEnv(context, envMap);
         setupFfmpegEnv(context, envMap);
         // Init mesa renderers
         MesaUtils.initEnvironment(context, renderer, envMap);
@@ -162,19 +160,22 @@ public class JREUtils {
             }
         }
 
+       if (renderer.equals("opengles3_ltw")) {
+          setupAngleEnv(context, envMap);
+       }
+
        if(renderer.equals("opengles_mobileglues")) {
            envMap.put("MG_DIR_PATH", Tools.DIR_DATA + "/MobileGlues");
-           envMap.put("POJAVEXEC_EGL","libmobileglues.so");
-        }
+       }
 
-        if(renderer.equals("opengles3_nggl4es")) {
+       if(renderer.equals("opengles3_nggl4es")) {
            envMap.put("LIBGL_USE_MC_COLOR", "1");
            envMap.put("DLOPEN", "libspirv-cross-c-shared.so");
            envMap.put("LIBGL_GL", "31");
            envMap.put("LIBGL_ES", "3");
            envMap.put("LIBGL_NORMALIZE", "1");
            envMap.put("LIBGL_NOINTOVLHACK", "1");
-        }
+       }
     }
 
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {

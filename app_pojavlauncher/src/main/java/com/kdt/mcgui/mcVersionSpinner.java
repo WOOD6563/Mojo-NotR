@@ -88,7 +88,7 @@ public class mcVersionSpinner extends ExtendedTextView {
         if(currentSelection instanceof InstanceAdapterExtra) {
             performExtraAction((InstanceAdapterExtra) currentSelection);
         }else{
-            Tools.swapFragment(fragmentActivity, InstanceEditorFragment.class, InstanceEditorFragment.TAG, null);
+            Tools.swapRightFragment(fragmentActivity, InstanceEditorFragment.class, InstanceEditorFragment.TAG, null);
         }
     }
 
@@ -142,7 +142,7 @@ public class mcVersionSpinner extends ExtendedTextView {
     private void performExtraAction(InstanceAdapterExtra extra) {
         //Replace with switch-case if you want to add more extra actions
         if (extra.id == VERSION_SPINNER_PROFILE_CREATE) {
-            Tools.swapFragment((FragmentActivity) getContext(), ProfileTypeSelectFragment.class,
+            Tools.swapRightFragment((FragmentActivity) getContext(), ProfileTypeSelectFragment.class,
                     ProfileTypeSelectFragment.TAG, null);
         }
     }

@@ -65,10 +65,21 @@ public class LauncherActivity extends BaseActivity {
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
         @Override
         public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
-            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
-                    ? R.drawable.ic_px_sliders : R.drawable.ic_px_home));
+            updateSettingsButtonIcon();
+        }
+
+        @Override
+        public void onFragmentDetached(@NonNull FragmentManager fm, @NonNull Fragment f) {
+            updateSettingsButtonIcon();
         }
     };
+
+    private void updateSettingsButtonIcon() {
+        Fragment rightFragment = getSupportFragmentManager().findFragmentById(R.id.right_fragment_container);
+        boolean somethingOpen = rightFragment != null;
+        mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(),
+                somethingOpen ? R.drawable.ic_px_home : R.drawable.ic_px_sliders));
+    }
 
     /* Listener for the back button in settings */
     private final ExtraListener<String> mBackPreferenceListener = (key, value) -> {
@@ -85,7 +96,7 @@ public class LauncherActivity extends BaseActivity {
         // Allow starting the add account only from the main menu, should it be moved to fragment itself ?
         if(!(fragment instanceof MainMenuFragment)) return false;
 
-        Tools.swapFragment(this, SelectAuthFragment.class, SelectAuthFragment.TAG, null);
+        Tools.swapRightFragment(this, SelectAuthFragment.class, SelectAuthFragment.TAG, null);
         return false;
     };
 
@@ -93,9 +104,9 @@ public class LauncherActivity extends BaseActivity {
     private final View.OnClickListener mSettingButtonListener = v -> {
         FragmentManager manager = getSupportFragmentManager();
         if(manager.isStateSaved()) return;
-        Fragment fragment = manager.findFragmentById(mFragmentView.getId());
-        if(fragment instanceof MainMenuFragment){
-            Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
+        Fragment rightFragment = manager.findFragmentById(R.id.right_fragment_container);
+        if(rightFragment == null){
+            Tools.swapRightFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
         } else{
             // The setting button doubles as a home button now
             Tools.backToMainMenu(this);

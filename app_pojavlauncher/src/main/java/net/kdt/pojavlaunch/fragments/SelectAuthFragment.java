@@ -28,16 +28,20 @@ public class SelectAuthFragment extends Fragment {
         Button mLocalButton = view.findViewById(R.id.button_local_authentication);
         Button mElyByButton = view.findViewById(R.id.button_elyby_authentication);
 
-        mMicrosoftButton.setOnClickListener(v -> launchAuthFragment(MicrosoftLoginFragment.class, MicrosoftLoginFragment.TAG));
-        mLocalButton.setOnClickListener(v -> launchAuthFragment(LocalLoginFragment.class, LocalLoginFragment.TAG));
-        mElyByButton.setOnClickListener(v -> launchAuthFragment(ElyByLoginFragment.class, ElyByLoginFragment.TAG));
+        mMicrosoftButton.setOnClickListener(v -> launchAuthFragment(MicrosoftLoginFragment.class, MicrosoftLoginFragment.TAG, false));
+        mLocalButton.setOnClickListener(v -> launchAuthFragment(LocalLoginFragment.class, LocalLoginFragment.TAG, true));
+        mElyByButton.setOnClickListener(v -> launchAuthFragment(ElyByLoginFragment.class, ElyByLoginFragment.TAG, false));
     }
 
-    private void launchAuthFragment(Class<? extends  Fragment> fragmentClass, String fragmentTag) {
+    private void launchAuthFragment(Class<? extends  Fragment> fragmentClass, String fragmentTag, boolean useRightFragment) {
         if(ProgressKeeper.hasProgressKey(ProgressLayout.AUTHENTICATE)) {
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_SHORT).show();
             return;
         }
-        Tools.swapFragment(requireActivity(), fragmentClass, fragmentTag, null);
+        if(useRightFragment) {
+            Tools.swapRightFragment(requireActivity(), fragmentClass, fragmentTag, null);
+        } else {
+            Tools.swapFragment(requireActivity(), fragmentClass, fragmentTag, null);
+        }
     }
 }

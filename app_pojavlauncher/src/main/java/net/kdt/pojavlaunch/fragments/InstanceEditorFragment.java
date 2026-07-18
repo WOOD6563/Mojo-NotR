@@ -133,7 +133,7 @@ public class InstanceEditorFragment extends Fragment implements CropperUtils.Cro
             bundle.putBoolean(FileSelectorFragment.BUNDLE_SELECT_FOLDER, false);
             bundle.putString(FileSelectorFragment.BUNDLE_ROOT_PATH, Tools.CTRLMAP_PATH);
 
-            Tools.swapFragment(requireActivity(),
+            Tools.swapRightFragment(requireActivity(),
                     FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
         };
     }

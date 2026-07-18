@@ -60,6 +60,7 @@
                 android:ems="10"
                 android:hint="@string/unnamed"
                 android:inputType="textPersonName"
+                android:imeOptions="flagNoExtractUi"
                 android:paddingHorizontal="@dimen/padding_heavy"
                 app:layout_constraintTop_toBottomOf="@id/vprof_editor_instance_icon" />
 
@@ -176,6 +177,7 @@
                 android:ems="10"
                 android:hint="@string/use_global_default"
                 android:inputType="text"
+                android:imeOptions="flagNoExtractUi"
                 android:paddingHorizontal="@dimen/padding_heavy"
                 android:textSize="@dimen/_13ssp"
 

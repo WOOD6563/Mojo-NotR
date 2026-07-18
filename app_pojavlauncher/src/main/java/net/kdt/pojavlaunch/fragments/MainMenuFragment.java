@@ -11,10 +11,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.kdt.mcgui.mcVersionSpinner;
 
@@ -36,6 +38,8 @@ public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";
 
     private mcVersionSpinner mVersionSpinner;
+    private View mBottomBar;
+    private final FragmentManager.OnBackStackChangedListener mBackStackListener = this::bottomBarVisibility;
 
     private final ActivityResultLauncher<Object> mModInstallerLauncher =
             registerForActivityResult(new OpenDocumentWithExtension("jar"), (data)->{
@@ -56,6 +60,9 @@ public class MainMenuFragment extends Fragment {
         ImageButton mEditProfileButton = view.findViewById(R.id.edit_profile_button);
         Button mPlayButton = view.findViewById(R.id.play_button);
         mVersionSpinner = view.findViewById(R.id.mc_version_spinner);
+        mBottomBar = view.findViewById(R.id.bottom_bar);
+        getChildFragmentManager().addOnBackStackChangedListener(mBackStackListener);
+        getParentFragmentManager().addOnBackStackChangedListener(mBackStackListener);
 
         mCustomControlButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
         mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation());
@@ -83,9 +90,32 @@ public class MainMenuFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getParentFragmentManager().removeOnBackStackChangedListener(mBackStackListener);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ExtraCore.setValue(ExtraConstants.REFRESH_ACCOUNT_SPINNER, true);
+    }
+
+    private void bottomBarVisibility() {
+        if (mBottomBar == null) return;
+        Fragment rightFragment = getParentFragmentManager().findFragmentById(R.id.right_fragment_container);
+        boolean hasFragment = rightFragment != null && rightFragment.isVisible();
+        mBottomBar.setVisibility(hasFragment ? View.GONE : View.VISIBLE);
+        if (!hasFragment && mVersionSpinner != null) {
+         mVersionSpinner.post(() -> mVersionSpinner.reloadProfiles());
+        }
+        View rightPanel = requireView().findViewById(R.id.right_panel);
+        if (rightPanel != null) {
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rightPanel.getLayoutParams();
+            params.bottomToBottom = hasFragment ? ConstraintLayout.LayoutParams.PARENT_ID : ConstraintLayout.LayoutParams.UNSET;
+            params.bottomToTop = hasFragment ? ConstraintLayout.LayoutParams.UNSET : R.id.bottom_bar;
+            rightPanel.setLayoutParams(params);
+        }
     }
 
     private void runInstallerWithConfirmation() {

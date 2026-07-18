@@ -781,6 +781,16 @@ public final class Tools {
                 .replace(R.id.container_fragment, fragmentClass, bundle, fragmentTag).commit();
     }
 
+    public static void swapRightFragment(FragmentActivity fragmentActivity, Class<? extends Fragment> fragmentClass,
+                                         @Nullable String fragmentTag, @Nullable Bundle bundle) {
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .addToBackStack(fragmentClass.getName())
+                .replace(R.id.right_fragment_container, fragmentClass, bundle, fragmentTag    )
+                .commit();
+    }
+
+
     public static void backToMainMenu(FragmentActivity fragmentActivity) {
         fragmentActivity.getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 

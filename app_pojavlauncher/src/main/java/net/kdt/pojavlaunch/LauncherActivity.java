@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.system.Os;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,6 +24,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 
 import com.kdt.mcgui.ProgressLayout;
 
@@ -49,6 +53,8 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
 
+import java.io.File;
+
 import git.artdeell.mojo.R;
 
 public class LauncherActivity extends BaseActivity {
@@ -56,6 +62,7 @@ public class LauncherActivity extends BaseActivity {
 
     private FragmentContainerView mFragmentView;
     private ImageButton mSettingsButton;
+    private View mTopBar;
     private ProgressLayout mProgressLayout;
     private ProgressServiceKeeper mProgressServiceKeeper;
     private NotificationManager mNotificationManager;
@@ -209,6 +216,8 @@ public class LauncherActivity extends BaseActivity {
 
         ExtraCore.addExtraListener(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
 
+        ExtraCore.addExtraListener(ExtraConstants.PAGE_OPACITY_CHANGED, mPageOpacityListener);
+
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions));
 
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_GAME);
@@ -218,6 +227,9 @@ public class LauncherActivity extends BaseActivity {
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_VERSION_LIST);
         mProgressLayout.observe(ProgressLayout.INSTANCE_INSTALL);
         mProgressLayout.observe(ProgressLayout.DATA_MIGRATION);
+
+        loadBackground(this);
+        applyPageOpacity(LauncherPreferences.PREF_PAGE_OPACITY);
     }
 
     @Override
@@ -225,6 +237,7 @@ public class LauncherActivity extends BaseActivity {
         super.onResume();
         ContextExecutor.setActivity(this);
         InstanceInstaller.postInstallCheck(this);
+        applyPageOpacity(LauncherPreferences.PREF_PAGE_OPACITY);
     }
 
     @Override
@@ -250,6 +263,7 @@ public class LauncherActivity extends BaseActivity {
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
 
         getSupportFragmentManager().unregisterFragmentLifecycleCallbacks(mFragmentCallbackListener);
+        ExtraCore.removeExtraListenerFromValue(ExtraConstants.PAGE_OPACITY_CHANGED, mPageOpacityListener);
     }
 
     /** Custom implementation to feel more natural when a backstack isn't present */
@@ -338,10 +352,50 @@ public class LauncherActivity extends BaseActivity {
                 .apply();
     }
 
+    public static void loadBackground(LauncherActivity activity) {
+      ImageView imageView = activity.findViewById(R.id.background_view);
+      File bgFile = new File(Tools.DIR_GAME_HOME, "launcher_background");
+      if (bgFile.exists()) {
+        Glide.with(activity)
+                    .load(bgFile)
+                    .signature(new com.bumptech.glide.signature.ObjectKey(bgFile.lastModified()))
+                    .centerCrop()
+                    .into(imageView);
+      } else {
+            imageView.setImageDrawable(null); 
+        }
+    }
+
+        private void applyPageOpacity(int pageOpacity){
+        float opacity = pageOpacity / 100f;
+        File bgFile = new File(Tools.DIR_GAME_HOME, "launcher_background");
+        float contentAlpha;
+        float topBarAlpha;
+        if (bgFile.exists()) {
+          contentAlpha = Math.max(0f, opacity - 0.1f);
+          topBarAlpha = Math.max(0f, opacity - 0.1f);
+        } else {
+          contentAlpha = 1f;
+          topBarAlpha = 1f;
+        }
+        mFragmentView.setAlpha(contentAlpha);
+        mTopBar.setAlpha(topBarAlpha);
+      }
+
+     public static void refreshPageOpacity(LauncherActivity activity){
+        activity.applyPageOpacity(LauncherPreferences.PREF_PAGE_OPACITY);
+     }
+
+     private final ExtraListener<Integer> mPageOpacityListener = (key, value) -> {
+        applyPageOpacity(value);
+        return false;
+     };
+
     /** Stuff all the view boilerplate here */
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
         mSettingsButton = findViewById(R.id.setting_button);
         mProgressLayout = findViewById(R.id.progress_layout);
+        mTopBar = findViewById(R.id.top_bar);
     }
 }

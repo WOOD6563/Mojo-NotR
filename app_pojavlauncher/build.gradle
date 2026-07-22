@@ -52,7 +52,7 @@ configurations {
 android {
     namespace 'git.artdeell.mojo'
 
-    compileSdk = 36
+    compileSdk = 37
 
     lintOptions {
         abortOnError false
@@ -323,6 +323,8 @@ dependencies {
     implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'androidx.annotation:annotation:1.10.0'
+
+    implementation 'com.github.bumptech.glide:glide:5.0.7'
 
     implementation "androidx.constraintlayout:constraintlayout:2.2.1"
 

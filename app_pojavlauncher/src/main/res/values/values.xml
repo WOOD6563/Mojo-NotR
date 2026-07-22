@@ -34,4 +34,8 @@
     <integer name="memory_seekbar_increment">8</integer>
     <integer name="memory_seekbar_min">256</integer>
 
+    <integer name="page_opacity_seekbar_increment">1</integer>
+    <integer name="page_opacity_seekbar_min">50</integer>
+    <integer name="page_opacity_seekbar_max">100</integer>
+
 </resources>

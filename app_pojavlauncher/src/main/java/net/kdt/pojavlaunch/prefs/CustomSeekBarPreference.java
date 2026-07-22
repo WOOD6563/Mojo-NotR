@@ -17,6 +17,10 @@ import git.artdeell.mojo.R;
 
 public class CustomSeekBarPreference extends SeekBarPreference {
 
+    public interface OnLiveProgressChangeListener {
+        void onProgressChanged(int progress);
+    }
+
     /** The suffix displayed */
     private String mSuffix = "";
     /** Custom minimum value to provide the same behavior as the usual setMin */
@@ -25,6 +29,7 @@ public class CustomSeekBarPreference extends SeekBarPreference {
     private TextView mTextView;
     /** Seekbar increment in case the max gets set */
     private final int mIncrement;
+    private OnLiveProgressChangeListener mLiveProgressChangeListener;
 
 
     @SuppressLint("PrivateResource")
@@ -78,6 +83,10 @@ public class CustomSeekBarPreference extends SeekBarPreference {
 
                 mTextView.setText(String.valueOf(progress + mMin));
                 updateTextViewWithSuffix();
+
+                if(fromUser && mLiveProgressChangeListener != null) {
+                    mLiveProgressChangeListener.onProgressChanged(progress + mMin);
+                }
             }
 
             @Override
@@ -105,6 +114,10 @@ public class CustomSeekBarPreference extends SeekBarPreference {
      */
     public void setSuffix(String suffix) {
         this.mSuffix = suffix;
+    }
+
+    public void setOnLiveProgressChangeListener(OnLiveProgressChangeListener listener) {
+        this.mLiveProgressChangeListener = listener;
     }
 
     /**

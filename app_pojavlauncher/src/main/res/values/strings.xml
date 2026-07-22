@@ -509,6 +509,14 @@
     <string name="loading_screen_title">Waiting for a game window to appear…</string>
     <string name="loading_screen_booted">Ready - running on %1$s!</string>
     <string name="loading_screen_warning">If you are stuck here, the game might have crashed</string>
+    <string name="preference_page_opacity_title">Page opacity</string>
+    <string name="preference_page_opacity_summary">Adjust the transparency of the launcher\'s pages</string>
+    <string name="preference_select_background_title">Select background image</string>
+    <string name="preference_select_background_summary">Choose an image to use as the launcher\'s background</string>
+    <string name="preference_delete_background_title">Delete background image</string>
+    <string name="preference_delete_background_summary">Remove the current custom background image</string>
+    <string name="background_deleted">Background image removed</string>
+    <string name="no_background_to_delete">No background image is currently set</string>
     <string name="preference_renderer_mobileglues_settings">MobileGlues Renderer Settings</string>
     <string name="mg_renderer_glsl_cache">Max GLSL cache size</string>
     <string name="mg_renderer_angle">Use ANGLE as driver</string>

@@ -41,8 +41,8 @@
         <item>opengles2</item> <!-- holy-gl4es with OpenGL ES 2/"3" -->
         <item>vulkan_zink</item> <!-- zink with OpenGL (undef) -->
         <item>freedreno_kgsl</item> <!-- freedreno gallium driver with OpenGL 4.6 -->
-        <item>opengles3_nggl4es</item>
-        <item>opengles_mobileglues</item> 
+        <item>opengles3</item> <!-- ng-gl4es with OpenGL ES 3 -->
+        <item>opengles_mobileglues</item> <!-- MG-ES -->
         <item>opengles3_ltw</item> <!-- GL Core on GLES wrapper with GL3/4 -->
     </string-array>
     <string-array name="download_source_names">

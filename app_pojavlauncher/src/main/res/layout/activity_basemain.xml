@@ -27,6 +27,19 @@
 				android:defaultFocusHighlightEnabled="false"
                 tools:ignore="UnusedAttribute">
 
+                          <TextView
+                                android:id="@+id/current_fps_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top|center_horizontal"
+                                android:translationZ="10dp"
+                                android:elevation="10dp"
+                                android:textSize="18sp"
+                                android:textColor="@android:color/white"
+                                android:padding="8dp"
+                                android:layout_marginTop="15dp"
+                                android:visibility="gone"/>
+
 				<net.kdt.pojavlaunch.game.GameCursorView
 					android:layout_height="match_parent"
 					android:layout_width="match_parent"

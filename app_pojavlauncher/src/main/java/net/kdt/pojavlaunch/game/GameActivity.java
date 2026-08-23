@@ -20,6 +20,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -66,6 +68,9 @@ import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
 import net.kdt.pojavlaunch.game.platform.Platform;
 import net.kdt.pojavlaunch.game.platform.backend.DummyBackend;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import git.artdeell.dnbootstrap.glfw.GLFW;
+import git.mojo.sdl.SDLActivity;
+import net.kdt.pojavlaunch.utils.DateUtils;
 import net.kdt.pojavlaunch.prefs.QuickSettingSideDialog;
 import net.kdt.pojavlaunch.services.GameService;
 import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
@@ -74,6 +79,7 @@ import net.kdt.pojavlaunch.utils.MCOptionUtils;
 import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.utils.jre.GameRunner;
+import net.kdt.pojavlaunch.JVersionList;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +91,7 @@ import git.artdeell.mojo.R;
 public class GameActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
     public static final String INTENT_LAUNCH_VERSION = "intent_version";
     public static final String INTENT_LAUNCH_CLASSPATH = "intent_classpath";
+    private final Handler fpsHandler = new Handler(Looper.getMainLooper());
 
     public static TouchCharInput touchCharInput;
     private GameView launcherGLView;
@@ -97,6 +104,9 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     private ControlLayout mControlLayout;
     private HotbarView mHotbarView;
     private View mLoadingScreen;
+    private boolean getCurrentFps = false;
+    private TextView currentFpsView;
+    private JVersionList.Version currentVersion;
 
     Instance instance;
     Account account;
@@ -246,6 +256,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                      case 2: dialogSendCustomKey(); break;
                      case 3: openQuickSettings(); break;
                      case 4: openCustomControls(); break;
+                     case 5: initCurrentFps(); break;
                 }
                 drawerLayout.closeDrawers();
             };
@@ -304,6 +315,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         mDrawerPullButton = findViewById(R.id.drawer_button);
         mHotbarView = findViewById(R.id.hotbar_view);
         mLoadingScreen = findViewById(R.id.main_loading_screen);
+        currentFpsView = findViewById(R.id.current_fps_view);
     }
 
     @Override
@@ -392,6 +404,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     private void runCraft(String versionId, File[] classpath) throws Throwable {
         LauncherPreferences.writeMGRendererSettings();
+        currentVersion = Tools.getVersionInfo(versionId);
         String renderer = instance.getLaunchRenderer();
         if(!RendererCompatUtil.checkRendererCompatible(this, renderer)) {
             RendererCompatUtil.RenderersList renderersList = RendererCompatUtil.getCompatibleRenderers(this);
@@ -423,6 +436,36 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         navDrawer.setOnItemClickListener(ingameControlsEditorListener);
         mDrawerPullButton.setVisibility(View.VISIBLE);
         isInEditor = true;
+    }
+
+    private final Runnable fpsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!getCurrentFps) return;
+            int fps;
+            try {
+                fps = isSdl(currentVersion)
+                    ? SDLActivity.nativeGetAndResetFps()
+                    : GLFW.initFps();
+            } catch (Exception e) {
+                fps = 0;
+            }
+
+            currentFpsView.setText("FPS: " + fps);
+            fpsHandler.postDelayed(this, 1000);
+        }
+    };
+
+    private void initCurrentFps() {
+        if (!getCurrentFps) {
+            getCurrentFps = true;
+            currentFpsView.setVisibility(View.VISIBLE);
+            fpsHandler.post(fpsRunnable);
+        } else {
+          getCurrentFps = false;
+          fpsHandler.removeCallbacks(fpsRunnable);
+          currentFpsView.setVisibility(View.GONE);
+        }
     }
 
     private void openLogOutput() {
@@ -575,5 +618,9 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         if(Tools.isAndroid8OrHigher() && checkCaptureDispatchConditions(ev))
             return launcherGLView.dispatchCapturedPointerEvent(ev);
         else return super.dispatchTrackballEvent(ev);
+    }
+
+    private static boolean isSdl(JVersionList.Version version) throws Exception {
+    return !DateUtils.dateBefore(DateUtils.getOriginalReleaseDate(version),2026, 7, 16);
     }
 }

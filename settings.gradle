@@ -14,10 +14,12 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name='PojavLauncher'
+rootProject.name='NotrLauncher'
 include ':app_pojavlauncher'
 
 include ':forge_installer'
 include ':glfw:jni_bindings'
 include ':mojoexec:jni_bindings'
 include ':sdl:jni_bindings'
+include ':MobileGlues'
+include ':NG-GL4ES'

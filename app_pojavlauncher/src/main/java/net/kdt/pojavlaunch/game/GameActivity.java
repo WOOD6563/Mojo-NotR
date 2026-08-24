@@ -403,7 +403,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     }
 
     private void runCraft(String versionId, File[] classpath) throws Throwable {
-        LauncherPreferences.writeMGRendererSettings();
         currentVersion = Tools.getVersionInfo(versionId);
         String renderer = instance.getLaunchRenderer();
         if(!RendererCompatUtil.checkRendererCompatible(this, renderer)) {

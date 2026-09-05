@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
-import net.kdt.pojavlaunch.BuildConfig
+import git.artdeell.mojo.BuildConfig
 import net.kdt.pojavlaunch.mobileglues.DeviceInfo
 import net.kdt.pojavlaunch.mobileglues.DeviceInfoProvider
 import net.kdt.pojavlaunch.mobileglues.MGApplication

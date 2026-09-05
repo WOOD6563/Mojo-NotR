@@ -58,7 +58,6 @@ import net.kdt.pojavlaunch.customcontrols.ControlJoystickData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.CustomControls;
 import net.kdt.pojavlaunch.customcontrols.EditorExitable;
-import net.kdt.pojavlaunch.customcontrols.keyboard.LwjglCharSender;
 import net.kdt.pojavlaunch.customcontrols.keyboard.TouchCharInput;
 import net.kdt.pojavlaunch.customcontrols.mouse.GyroControl;
 import net.kdt.pojavlaunch.customcontrols.mouse.HotbarView;
@@ -237,8 +236,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             if(!latestLogFile.exists() && !latestLogFile.createNewFile())
                 throw new IOException("Failed to create a new log file");
             Logger.begin(latestLogFile.getAbsolutePath());
-
-            touchCharInput.setCharacterSender(new LwjglCharSender());
 
             Bundle extras = Objects.requireNonNull(getIntent().getExtras());
             String version = extras.getString(INTENT_LAUNCH_VERSION);
@@ -488,6 +485,11 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                     } else {
                         mGyroControl.disable();
                     }
+                }
+
+                @Override
+                public void onButtonTransparencyChanged() {
+                    mControlLayout.updateButtonOpacity();
                 }
             };
         }
